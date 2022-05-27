@@ -10,13 +10,15 @@ import java.time.LocalDate;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column(name = "first_name")
+    private Long id;
+    @Column(name = "firstName")
     private String firstName;
-    @Column(name = "last_name")
+    @Column(name = "lastName")
     private String lastName;
-    @Column(name = "GPA")
+    @Column(name = "gpa")
     private double gpa;
-    @Column(name = "date_of_birth")
+    @Transient
+    private long age;
+    @Column(name = "dob")
     private LocalDate dob;
 }
