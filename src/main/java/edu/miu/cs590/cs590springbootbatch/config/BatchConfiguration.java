@@ -15,6 +15,7 @@ import org.springframework.batch.item.file.LineMapper;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
@@ -26,23 +27,23 @@ import javax.sql.DataSource;
 @EnableBatchProcessing
 public class BatchConfiguration {
 
-    @Bean
-    public Job job(JobBuilderFactory jobBuilderFactory,
-                   StepBuilderFactory stepBuilderFactory,
-                   ItemReader<Student> itemReader,
-                   ItemProcessor<Student, Student> itemProcessor,
-                   ItemWriter<Student> itemWriter
-    ) {
-        Step step = stepBuilderFactory.get("Student-file-load")
-                .<Student, Student>chunk(10)
-                .reader(itemReader)
-                .processor(itemProcessor)
-                .writer(itemWriter)
-                .build();
+    @Autowired
+    JobBuilderFactory jobBuilderFactory;
 
+    @Autowired
+    StepBuilderFactory stepBuilderFactory;
+
+    @Autowired
+    ItemProcessor<Student, Student> itemProcessor;
+
+    @Autowired
+    ItemWriter<Student> itemWriter;
+
+    @Bean
+    public Job job() {
         return jobBuilderFactory.get("Student-Load")
                 .incrementer(new RunIdIncrementer())
-                .start(step)
+                .start(step())
                 .build();
     }
 
@@ -72,5 +73,15 @@ public class BatchConfiguration {
         defaultLineMapper.setFieldSetMapper(fieldSetMapper);
 
         return defaultLineMapper;
+    }
+
+    @Bean
+    public Step step() {
+        return stepBuilderFactory.get("Student-file-load")
+                .<Student, Student>chunk(10)
+                .reader(itemReader())
+                .processor(itemProcessor)
+                .writer(itemWriter)
+                .build();
     }
 }
