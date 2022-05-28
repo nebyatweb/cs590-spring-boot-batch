@@ -1,0 +1,23 @@
+version: "3"
+services:
+  springboot-app:
+    restart: always
+    container_name: spring-batch
+    image: springboot-app
+    build: .
+    ports:
+      - "3001:3000"
+    environment:
+      MYSQL_HOST: mysqldb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+      MYSQL_PORT: 3306
+
+  mysqldb:
+    container_name: mysqldb
+    image: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: cs590
+      MYSQL_ROOT_PASSWORD: password
