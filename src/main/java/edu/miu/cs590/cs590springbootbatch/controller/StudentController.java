@@ -1,5 +1,7 @@
 package edu.miu.cs590.cs590springbootbatch.controller;
 
+import edu.miu.cs590.cs590springbootbatch.domain.Student;
+import edu.miu.cs590.cs590springbootbatch.service.StudentService;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
@@ -10,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,7 +27,11 @@ public class StudentController {
     @Autowired
     Job job;
 
+    @Autowired
+    StudentService studentService;
+
     @GetMapping("/load")
+    @RolesAllowed("ADMIN")
     public BatchStatus load() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
         Map<String, JobParameter> maps = new HashMap<>();
         maps.put("time", new JobParameter(System.currentTimeMillis()));
@@ -41,5 +49,11 @@ public class StudentController {
         }
 
         return jobExecution.getStatus();
+    }
+
+    @GetMapping()
+    @RolesAllowed("USER")
+    public List<Student> getAll() {
+        return studentService.getAllStudents();
     }
 }

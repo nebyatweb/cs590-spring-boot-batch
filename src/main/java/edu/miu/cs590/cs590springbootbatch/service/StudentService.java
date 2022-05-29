@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface StudentService {
     List<? extends Student> saveAllStudents(List<? extends Student> student);
+    List<Student> getAllStudents();
 }
