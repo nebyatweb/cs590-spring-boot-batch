@@ -7,6 +7,10 @@ run: docker compose up
 
 Spring security implemented with Keycloak
 
+Run keycloak server: http://keycloak:8080/admin
+Login with username - admin and password - admin
+Add realm and import realm-export.json file from the spring-boot app root folder (cs590-spring-boot-batch)
+
 User roles: ADMIN and USER
 
 Admin user: myadmin
@@ -22,7 +26,7 @@ to generate a token on postman, use the below info:
 Authentication Type: OAuth 2.0
 Token Type: Bearer
 Grant Type: Password Credentials
-Access Token URL: http://localhost:8080/realms/batch-auth/protocol/openid-connect/token
+Access Token URL: http://keycloak:8080/realms/batch-auth/protocol/openid-connect/token
 Client ID: springboot-keycloak
 Scope: openid
 

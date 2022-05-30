@@ -1,24 +1,41 @@
-version: "3"
+version: "3.8"
 services:
-  springboot-app:
-    restart: always
-    container_name: spring-batch
-    image: springboot-app
-    build: .
-    ports:
-      - "3001:3000"
-    environment:
-      MYSQL_HOST: mysqldb
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_PORT: 3306
-
   mysqldb:
-    container_name: mysqldb
     image: mysql
+    restart: unless-stopped
     ports:
-      - "3307:3306"
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: cs590
       MYSQL_ROOT_PASSWORD: password
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    cap_add:
+      - SYS_NICE
+  keycloak:
+    image: quay.io/keycloak/keycloak:18.0.0
+    restart: on-failure
+    command:
+      - start-dev
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_IMPORT: /realm-export.json
+    healthcheck:
+      test: ["cmd", "curl", "-f", "http://keycloak:8080"]
+      timeout: 20s
+      retries: 10
+  app:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      mysqldb:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy

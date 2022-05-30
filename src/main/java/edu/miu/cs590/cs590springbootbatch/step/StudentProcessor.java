@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 
 @Component
-public class StudentProcessor implements ItemProcessor<Student, Student> {
+public class StudentProcessor implements ItemProcessor<Student, Student> { //age => dob
 
     @Override
     public Student process(Student student) throws Exception {
